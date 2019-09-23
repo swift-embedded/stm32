@@ -1,0 +1,39 @@
+The 'Blinky' project is a simple demo program for
+ST 'STM32F407' microcontroller using Keil 'MCBSTM32F400' Evaluation Board.
+Compliant to Cortex Microcontroller Software Interface Standard (CMSIS).
+
+Example functionality:                                                   
+ - Clock Settings:
+   - XTAL    =           25.00 MHz
+   - SYSCLK  =          168.00 MHz
+
+ - LEDs are blinking as running light
+ - blinking speed depends on potentiometer position
+ - blinking is paused while holding down the USER button
+
+The Blinky program is available in different targets:
+ - Debug:
+   - Compiler optimization Level 1
+   - Enabled Event Recorder
+   - Keil RTX5 variant 'Source'
+ - Release:
+   - Compiler optimization Level 3
+   - Keil RTX5 variant 'Library'
+ - Debug RAM:
+   - Compiler optimization Level 1
+   - Enabled Event Recorder
+   - Keil RTX5 variant 'Source'
+   - Runs from internal RAM
+ - Release OPT:
+   - Compiler optimization Level 3
+   - Keil RTX5 variant 'Library'
+   - Flash Options Bytes
+ - Release OTP:
+   - Compiler optimization Level 3
+   - Keil RTX5 variant 'Library'
+   - One-Time programmable Bytes
+ - Debug ULP:
+   - Compiler optimization Level 1
+   - Enabled Event Recorder
+   - Keil RTX5 variant 'Source'
+   - Ulink-Pro and ETM

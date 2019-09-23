@@ -1,0 +1,1 @@
+../../CSTM32F439ZIHAL/stm32f4xx_hal_conf.h

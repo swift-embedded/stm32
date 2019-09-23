@@ -1,0 +1,8 @@
+This is a simple example which shows how to setup emWin Graphic Library
+for the ST 'STM32F429I-Discovery' Kit.
+
+The emWin Example is available in different targets:
+ - Debug:
+   - Compiler optimization Level 1
+ - Release:
+   - Compiler optimization Level 3

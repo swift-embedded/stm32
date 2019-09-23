@@ -1,0 +1,3 @@
+module CSTM32F4 {
+    umbrella header "CSTM32F4/CSTM32F4.h"
+}
