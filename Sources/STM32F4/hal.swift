@@ -1,4 +1,5 @@
 import CSTM32F4
+import Hardware
 
 public enum STM32F4Error: Error {
     case unknownError
@@ -27,6 +28,10 @@ public class STM32F4 {
     public var systemClockFrequency: Int { Int(HAL_RCC_GetSysClockFreq()) }
 
     public var tick: UInt32 { HAL_GetTick() }
+
+    public func sleep(_ interval: TimeInterval) {
+        HAL_Delay(UInt32(interval))
+    }
 
     deinit {
         try! HAL_DeInit().throwOnFailure()
