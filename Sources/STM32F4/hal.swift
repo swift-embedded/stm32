@@ -24,17 +24,9 @@ public class STM32F4 {
         try HAL_Init().throwOnFailure()
     }
 
-    public func delay(ms: Int) {
-        HAL_Delay(ms > 0 ? UInt32(ms) : 0)
-    }
+    public var systemClockFrequency: Int { Int(HAL_RCC_GetSysClockFreq()) }
 
-    public var systemClockFrequency: Int {
-        return Int(HAL_RCC_GetSysClockFreq())
-    }
-
-    public var tick: UInt32 {
-        return HAL_GetTick()
-    }
+    public var tick: UInt32 { HAL_GetTick() }
 
     deinit {
         try! HAL_DeInit().throwOnFailure()
@@ -49,8 +41,10 @@ public class STM32F4 {
     }
 }
 
-private var criticalSectionCounter = 0
+@usableFromInline
+internal var criticalSectionCounter = 0
 
+@inlinable
 public func criticalSection<RetVal>(_ f: () throws -> RetVal) rethrows -> RetVal {
     __disable_irq()
     criticalSectionCounter += 1
@@ -63,9 +57,17 @@ public func criticalSection<RetVal>(_ f: () throws -> RetVal) rethrows -> RetVal
     return try f()
 }
 
-@_silgen_name("_sleep_ms")
+@_silgen_name("_hardware_sleep_ms")
 func _sleep_ms(ms: UInt32) {
     HAL_Delay(ms)
+}
+
+@_silgen_name("_gettimeofday")
+func getTimeOfDay(tv: UnsafeMutablePointer<timeval>) -> Int {
+    let ticks = HAL_GetTick()
+    tv.pointee.tv_sec = time_t(ticks / 1000)
+    tv.pointee.tv_usec = suseconds_t((ticks % 1000) * 1000)
+    return 0
 }
 
 extension HAL_StatusTypeDef {

@@ -56,47 +56,35 @@ public final class I2C {
 }
 
 extension I2C: Hardware.I2C {
-    public func read(address: Int, length: Int, stop: Bool) throws -> [UInt8] {
+    public func read(address: Int, into buffer: UnsafeMutableBufferPointer<UInt8>, stop: Bool, timeout: TimeInterval) throws {
         precondition(stop, "I2C.write(..., stop=false) not supported")
-        let buffer = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: length)
-        defer { buffer.deallocate() }
         let result = HAL_I2C_Master_Receive(handle, UInt16(address) << 1,
                                             buffer.baseAddress,
-                                            UInt16(length), UInt32(timeoutMs))
+                                            UInt16(buffer.count), UInt32(timeout))
         try result.throwOnFailure()
-        return Array(buffer)
     }
 
-    public func write(address: Int, data: [UInt8], stop: Bool) throws {
+    public func write(address: Int, buffer: UnsafeBufferPointer<UInt8>, stop: Bool, timeout: TimeInterval) throws {
         precondition(stop, "I2C.write(..., stop=false) not supported")
-        var data = data
-        let result = data.withUnsafeMutableBufferPointer { buffer in
-            HAL_I2C_Master_Transmit(self.handle, UInt16(address) << 1,
-                                    buffer.baseAddress,
-                                    UInt16(buffer.count), UInt32(self.timeoutMs))
-        }
+        let result = _HAL_I2C_Master_Transmit(handle, UInt16(address) << 1,
+                                              buffer.baseAddress,
+                                              UInt16(buffer.count), UInt32(timeout))
         try result.throwOnFailure()
     }
 }
 
 extension I2C: Hardware.I2CMemory {
-    public func read(address: Int, register: UInt8, length: Int) throws -> [UInt8] {
-        let buffer = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: length)
-        defer { buffer.deallocate() }
+    public func read(address: Int, register: UInt8, into buffer: UnsafeMutableBufferPointer<UInt8>, timeout: TimeInterval) throws {
         let result = HAL_I2C_Mem_Read(handle, UInt16(address) << 1, UInt16(register),
                                       UInt16(I2C_MEMADD_SIZE_8BIT), buffer.baseAddress,
-                                      UInt16(length), UInt32(timeoutMs))
+                                      UInt16(buffer.count), UInt32(timeout))
         try result.throwOnFailure()
-        return Array(buffer)
     }
 
-    public func write(address: Int, register: UInt8, data: [UInt8]) throws {
-        var data = data
-        let result = data.withUnsafeMutableBufferPointer { buffer in
-            HAL_I2C_Mem_Write(self.handle, UInt16(address) << 1, UInt16(register),
-                              UInt16(I2C_MEMADD_SIZE_8BIT), buffer.baseAddress,
-                              UInt16(buffer.count), UInt32(self.timeoutMs))
-        }
+    public func write(address: Int, register: UInt8, buffer: UnsafeBufferPointer<UInt8>, timeout: TimeInterval) throws {
+        let result = _HAL_I2C_Mem_Write(handle, UInt16(address) << 1, UInt16(register),
+                                        UInt16(I2C_MEMADD_SIZE_8BIT), buffer.baseAddress,
+                                        UInt16(buffer.count), UInt32(timeout))
         try result.throwOnFailure()
     }
 }

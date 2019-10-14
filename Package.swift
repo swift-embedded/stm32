@@ -12,26 +12,37 @@ let package = Package(
     name: "STM32F4",
     products: [
         .library(
+            // Provides all the necessary things to run a Swift program
+            // on an stm32f4 devices, including an high-level HAL library.
+            name: "STM32F4",
+            targets: ["STM32F4", "STM32F4Startup"]
+        ),
+        .library(
+            // Minimal library providing only the necessary symbols to
+            // start a swift program on an stm32f4 device.
             name: "STM32F4Startup",
             targets: ["STM32F4Startup"]
         ),
         .library(
-            name: "STM32F4",
-            targets: ["STM32F4"]
-        ),
-        .library(
+            // The C STM32F4 HAL Library
             name: "CSTM32F4",
             targets: ["CSTM32F4"]
         ),
     ],
     dependencies: [
+        .package(url: "https://github.com/swift-embedded/unicode-support", .branch("master")),
         .package(url: "https://github.com/swift-embedded/hardware", .branch("master")),
         .package(url: "https://github.com/swift-embedded/crt0", .branch("master")),
     ],
     targets: [
         .target(
+            name: "STM32F4",
+            dependencies: ["CSTM32F4", "Hardware"],
+            cSettings: cSettings
+        ),
+        .target(
             name: "STM32F4Startup",
-            dependencies: ["Crt0"],
+            dependencies: ["Crt0", "SimpleUnicodeSupport"],
             cSettings: cSettings + [
                 .define("__STARTUP_CLEAR_BSS"),
                 .define("__STARTUP_COPY_MULTIPLE"),
@@ -52,14 +63,10 @@ let package = Package(
                 "./hal/stm32f4xx_hal_dma.c",
                 "./hal/stm32f4xx_hal_pwr_ex.c",
                 "./hal/stm32f4xx_hal_spi.c",
+                "./hal/stm32f4xx_hal_uart.c",
                 "./hal/stm32f4xx_ll_i2c.c",
             ],
             cSettings: cSettings + [.headerSearchPath(".")]
-        ),
-        .target(
-            name: "STM32F4",
-            dependencies: ["CSTM32F4", "Hardware"],
-            cSettings: cSettings
         ),
     ]
 )

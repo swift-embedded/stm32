@@ -3,7 +3,7 @@ import Hardware
 
 extension STM32F4 {
     public var spi: SPI {
-        return getOrCreateResource(
+        getOrCreateResource(
             identifier: "spi_1",
             create: SPI(address: SPI1_BASE,
                         enableClock: m__HAL_RCC_SPI1_CLK_ENABLE,
@@ -12,7 +12,7 @@ extension STM32F4 {
     }
 
     public var spi2: SPI {
-        return getOrCreateResource(
+        getOrCreateResource(
             identifier: "spi_2",
             create: SPI(address: SPI2_BASE,
                         enableClock: m__HAL_RCC_SPI2_CLK_ENABLE,
@@ -21,7 +21,7 @@ extension STM32F4 {
     }
 
     public var spi3: SPI {
-        return getOrCreateResource(
+        getOrCreateResource(
             identifier: "spi_3",
             create: SPI(address: SPI3_BASE,
                         enableClock: m__HAL_RCC_SPI3_CLK_ENABLE,
@@ -139,11 +139,9 @@ public final class SPI {
 }
 
 extension SPI: Hardware.SPI {
-    public func transmit(_ data: ContiguousArray<UInt8>) throws {
-        try data.withUnsafeBufferPointer { buffer in
-            try _HAL_SPI_Transmit(self.handle, buffer.baseAddress, UInt16(buffer.count),
-                                  UInt32(5000)).throwOnFailure()
-        }
+    public func send(_ buffer: UnsafeBufferPointer<UInt8>, timeout _: TimeInterval) throws {
+        try _HAL_SPI_Transmit(handle, buffer.baseAddress, UInt16(buffer.count),
+                              UInt32(5000)).throwOnFailure()
         while HAL_SPI_GetState(handle) != HAL_SPI_STATE_READY {}
     }
 }
