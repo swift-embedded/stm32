@@ -33,9 +33,6 @@ let package = Package(
         .package(url: "https://github.com/swift-embedded/unicode-support", .branch("master")),
         .package(url: "https://github.com/swift-embedded/hardware", .branch("master")),
         .package(url: "https://github.com/swift-embedded/crt0", .branch("master")),
-        // just so packages depending on this one can use `swift run cross ...` without
-        // explicitly depending on it
-        .package(url: "https://github.com/swift-embedded/cross", .branch("master")),
     ],
     targets: [
         .target(
