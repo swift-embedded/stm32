@@ -1,5 +1,6 @@
 import CSTM32F4
 import Hardware
+import Glibc
 
 public enum STM32F4Error: Error {
     case unknownError
